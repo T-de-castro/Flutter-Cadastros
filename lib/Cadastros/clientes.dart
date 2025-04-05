@@ -36,12 +36,14 @@ class _CadastroClientePage extends State<CadastroClientePage> {
                 TextFormField(
                   controller: nomeController,
                   decoration: const InputDecoration(hintText: 'Nome'),
+                  textCapitalization: TextCapitalization.words,
                 ),
                 SizedBox(height: 10),
 
                 TextFormField(
                   controller: enderecoController,
                   decoration: const InputDecoration(hintText: 'Endereco'),
+                  textCapitalization: TextCapitalization.words,
                 ),
                 SizedBox(height: 10),
 

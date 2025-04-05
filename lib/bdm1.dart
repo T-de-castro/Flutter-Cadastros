@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'Classes/Cliente.dart';
 import 'Classes/Servico.dart';
+import 'Classes/OS.dart';
 
 class bdm1 {
   static Database? _bd;
@@ -38,6 +39,17 @@ class bdm1 {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         descricao TEXT NOT NULL,
         precohora DECIMAL NOT NULL
+      )
+    ''');
+
+    await bd.execute('''
+      CREATE TABLE OS (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        quantidade DECIMAL NOT NULL,
+        precoservico DECIMAL NOT NULL,
+        data TEXT NOT NULL DEFAULT (CURRENT_DATE),
+        idCliente int NOT NULL,
+        idServico int NOT NULL
       )
     ''');
   }
@@ -92,7 +104,7 @@ class bdm1 {
     await bd.insert('servico', dados);
   }
 
-  // 9. Buscar todos os clientes
+  // 9. Buscar todos os Serviços
   Future<List<Servico>> listarServicos() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('servico');
@@ -119,5 +131,47 @@ class bdm1 {
   Future<void> deletarServico(int id) async {
     final bd = await database;
     await bd.delete('servico', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // 12. Inserir um dado na tabela
+  Future<void> inserirOS(Map<String, dynamic> dados) async {
+    final bd = await database;
+    await bd.insert('OS', dados);
+  }
+
+  // 13. Buscar todas as Os
+  Future<List<OS>> listarOS() async {
+    final db = await database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+    SELECT 
+      os.id, 
+      os.idCliente, 
+      os.idServico, 
+      os.quantidade, 
+      os.precoservico, 
+      os.data,
+      c.nome AS nomeCliente,
+      s.descricao AS nomeServico
+    FROM os
+    JOIN cliente c ON os.idCliente = c.id
+    JOIN servico s ON os.idServico = s.id
+  ''');
+
+    return List.generate(maps.length, (i) {
+      return OS.fromMap(maps[i]);
+    });
+  }
+
+  // 14. Atualizar uma Os
+  Future<void> atualizarOS(Map<String, dynamic> dados) async {
+    final bd = await database;
+    await bd.update('OS', dados, where: 'id = ?', whereArgs: [dados['id']]);
+  }
+
+  // 15. Deletar uma Os
+  Future<void> deletarOS(int id) async {
+    final bd = await database;
+    await bd.delete('OS', where: 'id = ?', whereArgs: [id]);
   }
 }

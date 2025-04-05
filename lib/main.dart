@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'Listar/clientes.dart';
 import 'package:aplicativo/Cadastros/servicos.dart';
 import 'package:aplicativo/Listar/servicos.dart';
-import 'package:aplicativo/Vendas/servicos.dart';
 import 'package:aplicativo/Vendas/pedidodevenda.dart';
 import 'package:aplicativo/bdm1.dart';
+import 'package:aplicativo/Cadastros/OS.dart';
+import 'package:aplicativo/Listar/OS.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,12 +25,12 @@ class MyApp extends StatelessWidget {
         '/': (context) => MyHomePage(),
         'Listar/clientes': (context) => ListarClientesPage(),
         'Home': (context) => MyHomePage(),
-        'Cadastrar/clientes': (context) =>CadastroClientePage(),
+        'Cadastrar/clientes': (context) => CadastroClientePage(),
         'Listar/servicos': (context) => ListarServicosPage(),
-        'Cadastrar/servicos': (context) =>CadastroServicoPage(),
-        'Vendas/servicos': (context) =>VendasServicoPage(),
-        'Vendas/pedidodevenda': (context) =>PedidodeVendaPage(),
-
+        'Cadastrar/servicos': (context) => CadastroServicoPage(),
+        'Vendas/OS': (context) => VendasOSPage(),
+        'Listar/OS': (context) => ListarOSPage(),
+        'Vendas/pedidodevenda': (context) => PedidodeVendaPage(),
       },
       title: 'My App',
       theme: ThemeData(
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatelessWidget {
   @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -52,8 +53,8 @@ class MyHomePage extends StatelessWidget {
       ),
       drawer: Menu(),
       body: Column(
-        children: <Widget> [
-          Container (
+        children: <Widget>[
+          Container(
             padding: EdgeInsets.all(30),
             child: Text('Bem Vindo a tela Inicial!'),
           ),
@@ -64,14 +65,14 @@ class MyHomePage extends StatelessWidget {
             onPressed: () async {
               await bdm1().deletarBanco();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Banco de dados apagado! Reinicie o app.')),
+                SnackBar(
+                  content: Text('Banco de dados apagado! Reinicie o app.'),
+                ),
               );
             },
           ),
-        ]
+        ],
       ),
     );
   }
 }
-
-

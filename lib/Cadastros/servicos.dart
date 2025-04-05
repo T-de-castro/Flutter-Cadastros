@@ -34,6 +34,7 @@ class _CadastroServicoPage extends State<CadastroServicoPage> {
                 TextFormField(
                   controller: descricaoController,
                   decoration: const InputDecoration(hintText: 'Descrição'),
+                  textCapitalization: TextCapitalization.words,
                 ),
                 SizedBox(height: 10),
                 TextFormField(
