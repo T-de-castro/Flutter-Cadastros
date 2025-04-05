@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aplicativo/Components/Menu.dart';  // Importando a classe Menu
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class CadastroServicoPage extends StatefulWidget {
   @override
@@ -9,7 +10,7 @@ class CadastroServicoPage extends StatefulWidget {
 
 class _CadastroServicoPage extends State<CadastroServicoPage> {
   final TextEditingController descricaoController = TextEditingController();
-  final TextEditingController precohoraController = TextEditingController();
+  final TextEditingController precohoraController = MaskedTextController(mask: '00,00');
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Adicionando chave para validação
 
@@ -41,6 +42,7 @@ class _CadastroServicoPage extends State<CadastroServicoPage> {
                 TextFormField(
                   controller: precohoraController,
                   decoration: const InputDecoration(hintText: 'Preço por Hora'),
+                  keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 10),
 

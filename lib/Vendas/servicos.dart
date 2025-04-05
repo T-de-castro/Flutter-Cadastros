@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aplicativo/Components/Menu.dart';  // Importando a classe Menu
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class VendasServicoPage extends StatefulWidget {
   @override
@@ -10,17 +11,17 @@ class VendasServicoPage extends StatefulWidget {
 class _VendasServicoPage extends State<VendasServicoPage> {
   final TextEditingController clienteController = TextEditingController();
   final TextEditingController servicoController = TextEditingController();
-  final TextEditingController qtdeController = TextEditingController();
-  final TextEditingController precohoraController= TextEditingController();
-  final TextEditingController dataController = TextEditingController();
+  final TextEditingController qtdeController = MaskedTextController(mask: '00,00');
+  final TextEditingController precohoraController= MaskedTextController(mask: '00,00');
+  final TextEditingController dataController = MaskedTextController(mask: '00/00/0000');
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Adicionando chave para validação
 
   double Total = 0.0;
 
   void CalculaTotal(){
-    final double qtde = double.tryParse(qtdeController.text) ?? 0.0;
-    final double precohora = double.tryParse(precohoraController.text) ?? 0.0;
+    final double qtde = double.tryParse(qtdeController.text.replaceAll(',', '.')) ?? 0.0;
+    final double precohora = double.tryParse(precohoraController.text.replaceAll(',', '.')) ?? 0.0;
 
     setState(() {
       Total = qtde * precohora;
@@ -62,6 +63,7 @@ class _VendasServicoPage extends State<VendasServicoPage> {
                   controller: qtdeController,
                   decoration: const InputDecoration(hintText: 'Quantidade'),
                   onChanged: (value) => CalculaTotal(),
+                  keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 10),
 
@@ -69,12 +71,14 @@ class _VendasServicoPage extends State<VendasServicoPage> {
                   controller: precohoraController,
                   decoration: const InputDecoration(hintText: 'Preço por hora'),
                   onChanged: (value) => CalculaTotal(),
+                  keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 10),
 
                 TextFormField(
                   controller: dataController,
                   decoration: const InputDecoration(hintText: 'Data'),
+                  keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 10),
 

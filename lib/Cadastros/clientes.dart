@@ -49,7 +49,7 @@ class _CadastroClientePage extends State<CadastroClientePage> {
                 TextFormField(
                   controller: telefoneController,
                   decoration: const InputDecoration(hintText: 'Telefone'),
-                  keyboardType: TextInputType.phone,
+                  keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 10),
 
