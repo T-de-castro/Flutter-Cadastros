@@ -6,6 +6,7 @@ import 'package:aplicativo/Cadastros/servicos.dart';
 import 'package:aplicativo/Listar/servicos.dart';
 import 'package:aplicativo/Vendas/servicos.dart';
 import 'package:aplicativo/Vendas/pedidodevenda.dart';
+import 'package:aplicativo/bdm1.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +56,18 @@ class MyHomePage extends StatelessWidget {
           Container (
             padding: EdgeInsets.all(30),
             child: Text('Bem Vindo a tela Inicial!'),
-          ) 
+          ),
+          ElevatedButton.icon(
+            icon: Icon(Icons.delete_forever, color: Colors.white),
+            label: Text('Apagar Banco de Dados (Dev)'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              await bdm1().deletarBanco();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Banco de dados apagado! Reinicie o app.')),
+              );
+            },
+          ),
         ]
       ),
     );
