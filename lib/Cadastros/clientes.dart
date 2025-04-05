@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aplicativo/Components/Menu.dart';  // Importando a classe Menu
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class CadastroClientePage extends StatefulWidget {
   @override
@@ -9,9 +10,8 @@ class CadastroClientePage extends StatefulWidget {
 
 class _CadastroClientePage extends State<CadastroClientePage> {
   final TextEditingController nomeController = TextEditingController();
-  final TextEditingController documentoController = TextEditingController();
   final TextEditingController enderecoController = TextEditingController();
-  final TextEditingController telefoneController = TextEditingController();
+  final TextEditingController telefoneController = MaskedTextController(mask: '(00) 00000-0000');
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Adicionando chave para validação
 
@@ -41,12 +41,6 @@ class _CadastroClientePage extends State<CadastroClientePage> {
                 SizedBox(height: 10),
 
                 TextFormField(
-                  controller: documentoController,
-                  decoration: const InputDecoration(hintText: 'Documento'),
-                ),
-                SizedBox(height: 10),
-
-                TextFormField(
                   controller: enderecoController,
                   decoration: const InputDecoration(hintText: 'Endereco'),
                 ),
@@ -55,6 +49,7 @@ class _CadastroClientePage extends State<CadastroClientePage> {
                 TextFormField(
                   controller: telefoneController,
                   decoration: const InputDecoration(hintText: 'Telefone'),
+                  keyboardType: TextInputType.phone,
                 ),
                 SizedBox(height: 10),
 

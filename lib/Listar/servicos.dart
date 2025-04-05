@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:aplicativo/Components/Menu.dart';  // Importando a classe Menu
 
-class ListarProdutosPage extends StatelessWidget {
+class ListarServicosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Produtos'),
+        title: Text('Serviços'),
       ),
       drawer: Menu(),
       body: Column(
@@ -17,12 +17,12 @@ class ListarProdutosPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,  // Centraliza os filhos no eixo vertical
               children: <Widget> [
-                Text('Lista de Produtos'),
+                Text('Lista de Serviços'),
                 SizedBox(height: 20,),
                 ElevatedButton(
                   child: Text('Novo'),
                   onPressed: () {
-                    Navigator.of(context).pushNamed('Cadastrar/produtos');
+                    Navigator.of(context).pushNamed('Cadastrar/servicos');
                   },
                 ),
               ]

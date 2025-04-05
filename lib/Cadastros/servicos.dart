@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:aplicativo/Components/Menu.dart';  // Importando a classe Menu
 
-class CadastroProdutoPage extends StatefulWidget {
+class CadastroServicoPage extends StatefulWidget {
   @override
-    State<CadastroProdutoPage> createState() => _CadastroProdutoPage();
+    State<CadastroServicoPage> createState() => _CadastroServicoPage();
 
 }
 
-class _CadastroProdutoPage extends State<CadastroProdutoPage> {
+class _CadastroServicoPage extends State<CadastroServicoPage> {
   final TextEditingController descricaoController = TextEditingController();
-  final TextEditingController qtdeController = TextEditingController();
-  final TextEditingController precovendaController = TextEditingController();
-  final TextEditingController precocompraController = TextEditingController();
+  final TextEditingController precohoraController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Adicionando chave para validação
 
@@ -21,7 +19,7 @@ class _CadastroProdutoPage extends State<CadastroProdutoPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Cadastro de Produtos'),
+        title: Text('Cadastro de Serviços'),
       ),
       drawer: Menu(),
       body: Column(
@@ -31,7 +29,7 @@ class _CadastroProdutoPage extends State<CadastroProdutoPage> {
             child: Column(
               children: [
                 Text(
-                  'Novo Produto', 
+                  'Novo Serviço', 
                   style: TextStyle(fontSize: 25)
                 ),
                 TextFormField(
@@ -41,27 +39,15 @@ class _CadastroProdutoPage extends State<CadastroProdutoPage> {
                 SizedBox(height: 10),
 
                 TextFormField(
-                  controller: qtdeController,
-                  decoration: const InputDecoration(hintText: 'Quantidade'),
-                ),
-                SizedBox(height: 10),
-
-                TextFormField(
-                  controller: precovendaController,
-                  decoration: const InputDecoration(hintText: 'Preço de Venda'),
-                ),
-                SizedBox(height: 10),
-
-                TextFormField(
-                  controller: precocompraController,
-                  decoration: const InputDecoration(hintText: 'Preço de Custo'),
+                  controller: precohoraController,
+                  decoration: const InputDecoration(hintText: 'Preço por Hora'),
                 ),
                 SizedBox(height: 10),
 
                 ElevatedButton(
                   child: Text('Incluir'),
                   onPressed: () {
-                    Navigator.of(context).pushNamed('Listar/produtos');
+                    Navigator.of(context).pushNamed('Listar/servicos');
                   },
                 ),
               ],

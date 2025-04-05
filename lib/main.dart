@@ -2,8 +2,10 @@ import 'package:aplicativo/Cadastros/clientes.dart';
 import 'package:aplicativo/Components/Menu.dart';
 import 'package:flutter/material.dart';
 import 'Listar/clientes.dart';
-import 'package:aplicativo/Cadastros/produtos.dart';
-import 'package:aplicativo/Listar/produtos.dart';
+import 'package:aplicativo/Cadastros/servicos.dart';
+import 'package:aplicativo/Listar/servicos.dart';
+import 'package:aplicativo/Vendas/servicos.dart';
+import 'package:aplicativo/Vendas/pedidodevenda.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,8 +24,10 @@ class MyApp extends StatelessWidget {
         'Listar/clientes': (context) => ListarClientesPage(),
         'Home': (context) => MyHomePage(),
         'Cadastrar/clientes': (context) =>CadastroClientePage(),
-        'Listar/produtos': (context) => ListarProdutosPage(),
-        'Cadastrar/produtos': (context) =>CadastroProdutoPage(),
+        'Listar/servicos': (context) => ListarServicosPage(),
+        'Cadastrar/servicos': (context) =>CadastroServicoPage(),
+        'Vendas/servicos': (context) =>VendasServicoPage(),
+        'Vendas/pedidodevenda': (context) =>PedidodeVendaPage(),
 
       },
       title: 'My App',

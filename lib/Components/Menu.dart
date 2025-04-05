@@ -9,7 +9,7 @@ class Menu extends StatelessWidget {
         children: <Widget> [
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.red,
+              color: const Color.fromARGB(255, 240, 69, 56),
             ),
             child: Row(
               children: [
@@ -33,11 +33,11 @@ class Menu extends StatelessWidget {
           ),
           ExpansionTile(
             leading: Icon(Icons.person),
-            title: Text('Clientes'),
+            title: Text('Cadastros'),
             children: <Widget> [
               ListTile(
                 leading: Icon(Icons.list),
-                title: Text('Lista de Clientes'),
+                title: Text('Clientes'),
                 onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, 'Listar/clientes');
@@ -45,32 +45,32 @@ class Menu extends StatelessWidget {
               ),
               ListTile(
                 leading: Icon(Icons.list),
-                title: Text('Cadastro de Clientes'),
+                title: Text('Serviços'),
                 onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, 'Cadastrar/clientes');
+                Navigator.pushNamed(context, 'Listar/servicos');
                 }
               )
             ],
           ),
           ExpansionTile(
             leading: Icon(Icons.inventory_2_rounded),
-            title: Text('Produtos'),
+            title: Text('Vendas'),
             children: <Widget> [
               ListTile(
                 leading: Icon(Icons.list),
-                title: Text('Lista de Produtos'),
+                title: Text('Ordem de Serviço'),
                 onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, 'Listar/produtos');
+                Navigator.pushNamed(context, 'Vendas/servicos');
                 }
               ),
               ListTile(
                 leading: Icon(Icons.list),
-                title: Text('Cadastro de Produtos'),
+                title: Text('Pedido de Venda'),
                 onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, 'Cadastrar/produtos');
+                Navigator.pushNamed(context, 'Vendas/pedidodevenda');
                 }
               )
             ],
