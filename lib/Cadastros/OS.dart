@@ -77,164 +77,202 @@ class _VendasOSPage extends State<VendasOSPage> {
       drawer: Menu(),
       body: Column(
         children: <Widget>[
+          // Linha com o botão de voltar e título
           Container(
             padding: EdgeInsets.all(30),
-            child: Column(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
                 Text('Nova OS', style: TextStyle(fontSize: 25)),
-                DropdownButtonFormField<Cliente>(
-                  decoration: InputDecoration(hintText: 'Selecione o Cliente'),
-                  value: _clienteSelecionado,
-                  onChanged: (Cliente? novoCliente) {
-                    setState(() {
-                      _clienteSelecionado = novoCliente;
-                    });
-                  },
-                  items:
-                      _clientes.map((cliente) {
-                        return DropdownMenuItem<Cliente>(
-                          value: cliente,
-                          child: Text('${cliente.nome}'),
-                        );
-                      }).toList(),
-                ),
-                SizedBox(height: 10),
-                DropdownButtonFormField<Servico>(
-                  decoration: InputDecoration(hintText: 'Selecione o Serviço'),
-                  value: _servicoSelecionado,
-                  onChanged: (Servico? novoServico) {
-                    setState(() {
-                      _servicoSelecionado = novoServico;
-
-                      if (novoServico != null) {
-                        precoservicoController.text = novoServico.precohora
-                            .toStringAsFixed(2)
-                            .replaceAll('.', ',');
-
-                        // Atualiza o total automaticamente se quiser
-                        _atualizarTotal();
-                      }
-                    });
-                  },
-                  items:
-                      _servicos.map((servico) {
-                        return DropdownMenuItem<Servico>(
-                          value: servico,
-                          child: Text('${servico.descricao}'),
-                        );
-                      }).toList(),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: quantidadeController,
-                  decoration: const InputDecoration(hintText: 'Quantidade'),
-                  keyboardType: TextInputType.number,
-                  onChanged: (_) => _atualizarTotal(),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: precoservicoController,
-                  decoration: const InputDecoration(
-                    hintText: 'Preço do Serviço',
-                  ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (_) => _atualizarTotal(),
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: dataController,
-                  decoration: const InputDecoration(hintText: 'Data'),
-                  keyboardType: TextInputType.number,
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: totalController,
-                  decoration: const InputDecoration(
-                    hintText: 'Total',
-                    filled: true,
-                    fillColor: Color(
-                      0xFFF0F0F0,
-                    ), // cor de fundo para parecer desabilitado
-                  ),
-                  readOnly: true,
-                  enableInteractiveSelection: false, // impede seleção de texto
-                ),
-                ElevatedButton(
-                  child: Text('Incluir'),
-                  onPressed: () async {
-                    if (_clienteSelecionado == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Selecione um cliente!')),
-                      );
-                      return;
-                    }
-
-                    if (_servicoSelecionado == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Selecione um serviço!')),
-                      );
-                      return;
-                    }
-
-                    // Converte a vírgula para ponto e tenta parsear como double
-                    String quantidadeText =
-                        quantidadeController.text
-                            .replaceAll('R\$', '')
-                            .replaceAll(',', '.')
-                            .trim();
-
-                    double? quantidadeConvertido = double.tryParse(
-                      quantidadeText,
-                    );
-                    if (quantidadeConvertido == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Quantidade inválida!')),
-                      );
-                      return;
-                    }
-
-                    String precoservicoText =
-                        precoservicoController.text
-                            .replaceAll('R\$', '')
-                            .replaceAll(',', '.')
-                            .trim();
-
-                    double? precoservicoConvertido = double.tryParse(
-                      precoservicoText,
-                    );
-
-                    if (precoservicoConvertido == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Preço inválido!')),
-                      );
-                      return;
-                    }
-
-                    final novaOS = OS(
-                      idCliente: _clienteSelecionado!.id!,
-                      idServico: _servicoSelecionado!.id!,
-                      quantidade: quantidadeConvertido,
-                      precoservico: precoservicoConvertido,
-                      data:
-                          DateTime.now(), // ou parse de dataController se quiser usar
-                    );
-
-                    await bdm1().inserirOS(novaOS.toMap());
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('OS salva com sucesso!')),
-                    );
-
-                    quantidadeController.clear();
-                    precoservicoController.clear();
-                    dataController.clear();
-                    totalController.clear();
-
-                    Navigator.of(context).pushNamed('Listar/OS');
-                  },
-                ),
+                SizedBox(width: 48), // Espaço vazio para alinhar à direita
               ],
             ),
+          ),
+          // Campo Dropdown Cliente com borda lateral
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: DropdownButtonFormField<Cliente>(
+              decoration: InputDecoration(
+                hintText: 'Selecione o Cliente',
+                border: OutlineInputBorder(), // Borda do campo
+              ),
+              value: _clienteSelecionado,
+              onChanged: (Cliente? novoCliente) {
+                setState(() {
+                  _clienteSelecionado = novoCliente;
+                });
+              },
+              items:
+                  _clientes.map((cliente) {
+                    return DropdownMenuItem<Cliente>(
+                      value: cliente,
+                      child: Text('${cliente.nome}'),
+                    );
+                  }).toList(),
+            ),
+          ),
+          SizedBox(height: 10),
+          // Campo Dropdown Serviço com borda lateral
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: DropdownButtonFormField<Servico>(
+              decoration: InputDecoration(
+                hintText: 'Selecione o Serviço',
+                border: OutlineInputBorder(),
+              ),
+              value: _servicoSelecionado,
+              onChanged: (Servico? novoServico) {
+                setState(() {
+                  _servicoSelecionado = novoServico;
+
+                  if (novoServico != null) {
+                    precoservicoController.text = novoServico.precohora
+                        .toStringAsFixed(2)
+                        .replaceAll('.', ',');
+
+                    _atualizarTotal();
+                  }
+                });
+              },
+              items:
+                  _servicos.map((servico) {
+                    return DropdownMenuItem<Servico>(
+                      value: servico,
+                      child: Text('${servico.descricao}'),
+                    );
+                  }).toList(),
+            ),
+          ),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextFormField(
+              controller: quantidadeController,
+              decoration: const InputDecoration(
+                hintText: 'Quantidade',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              onChanged: (_) => _atualizarTotal(),
+            ),
+          ),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextFormField(
+              controller: precoservicoController,
+              decoration: const InputDecoration(
+                hintText: 'Preço do Serviço',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              onChanged: (_) => _atualizarTotal(),
+            ),
+          ),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextFormField(
+              controller: dataController,
+              decoration: const InputDecoration(
+                hintText: 'Data',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextFormField(
+              controller: totalController,
+              decoration: const InputDecoration(
+                hintText: 'Total',
+                filled: true,
+                fillColor: Color(0xFFF0F0F0),
+                border: OutlineInputBorder(),
+              ),
+              readOnly: true,
+              enableInteractiveSelection: false,
+            ),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            child: Text('Incluir'),
+            onPressed: () async {
+              if (_clienteSelecionado == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Selecione um cliente!')),
+                );
+                return;
+              }
+
+              if (_servicoSelecionado == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Selecione um serviço!')),
+                );
+                return;
+              }
+
+              // Converte a vírgula para ponto e tenta parsear como double
+              String quantidadeText =
+                  quantidadeController.text
+                      .replaceAll('R\$', '')
+                      .replaceAll(',', '.')
+                      .trim();
+
+              double? quantidadeConvertido = double.tryParse(quantidadeText);
+              if (quantidadeConvertido == null) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Quantidade inválida!')));
+                return;
+              }
+
+              String precoservicoText =
+                  precoservicoController.text
+                      .replaceAll('R\$', '')
+                      .replaceAll(',', '.')
+                      .trim();
+
+              double? precoservicoConvertido = double.tryParse(
+                precoservicoText,
+              );
+
+              if (precoservicoConvertido == null) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Preço inválido!')));
+                return;
+              }
+
+              final novaOS = OS(
+                idCliente: _clienteSelecionado!.id!,
+                idServico: _servicoSelecionado!.id!,
+                quantidade: quantidadeConvertido,
+                precoservico: precoservicoConvertido,
+                data: DateTime.now(),
+              );
+
+              await bdm1().inserirOS(novaOS.toMap());
+
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('OS salva com sucesso!')));
+
+              quantidadeController.clear();
+              precoservicoController.clear();
+              dataController.clear();
+              totalController.clear();
+
+              Navigator.of(context).pushNamed('Listar/OS');
+            },
           ),
         ],
       ),

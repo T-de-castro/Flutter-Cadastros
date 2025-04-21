@@ -1,6 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:aplicativo/bdm1.dart';
 
-class Menu extends StatelessWidget {
+class Menu extends StatefulWidget {
+  @override
+  _MenuState createState() => _MenuState();
+}
+
+class _MenuState extends State<Menu> {
+  String nomeUsuario = 'Nome do Usuário';
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarNomeUsuario();
+  }
+
+  Future<void> _carregarNomeUsuario() async {
+    final nome = await bdm1().buscarUsuario();
+    setState(() {
+      nomeUsuario = nome ?? 'Nome do Usuário';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -9,13 +30,19 @@ class Menu extends StatelessWidget {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 240, 69, 56),
+              color: Theme.of(context).colorScheme.inversePrimary,
             ),
             child: Row(
               children: [
                 Icon(Icons.account_circle, color: Colors.white, size: 80),
                 SizedBox(width: 20),
-                Text('Nome do Usuário'),
+                Flexible(
+                  child: Text(
+                    nomeUsuario,
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
           ),
@@ -70,6 +97,21 @@ class Menu extends StatelessWidget {
                 },
               ),
             ],
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.delete_forever, color: Colors.red),
+            title: Text(
+              'Apagar Banco de Dados',
+              style: TextStyle(color: Colors.red),
+            ),
+            onTap: () async {
+              await bdm1().deletarBanco();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Banco de dados apagado!')),
+              );
+              Navigator.pop(context); // Fecha o drawer
+            },
           ),
         ],
       ),

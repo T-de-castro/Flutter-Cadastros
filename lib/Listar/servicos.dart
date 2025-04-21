@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:aplicativo/Components/Menu.dart'; // Importando a classe Menu
+import 'package:aplicativo/Components/Menu.dart';
 import 'package:aplicativo/Classes/Servico.dart';
 import 'package:aplicativo/bdm1.dart';
 
-class ListarServicosPage extends StatelessWidget {
-  Future<List<Servico>> _listarServicos() async {
-    return await bdm1().listarServicos();
+class ListarServicosPage extends StatefulWidget {
+  @override
+  _ListarServicosPageState createState() => _ListarServicosPageState();
+}
+
+class _ListarServicosPageState extends State<ListarServicosPage> {
+  List<Servico> _listaServicos = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarServicos();
+  }
+
+  Future<void> _carregarServicos() async {
+    final servicos = await bdm1().listarServicos();
+    setState(() {
+      _listaServicos = servicos;
+    });
   }
 
   @override
@@ -16,80 +32,118 @@ class ListarServicosPage extends StatelessWidget {
         title: Text('Serviços'),
       ),
       drawer: Menu(),
-      body: FutureBuilder<List<Servico>>(
-        future: _listarServicos(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Erro: ${snapshot.error}'));
-          } else {
-            return Column(
-              children: [
-                // O conteúdo da lista de serviços
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // Se não houver dados, exibe a mensagem de "Nenhum serviço encontrado!"
-                        if (snapshot.data!.isEmpty)
-                          Center(child: Text('Nenhum serviço encontrado!')),
+      body:
+          _listaServicos.isEmpty
+              ? Center(child: Text('Nenhum serviço encontrado!'))
+              : SingleChildScrollView(
+                child: Column(
+                  children:
+                      _listaServicos.map((servico) {
+                        return Container(
+                          width: 400,
+                          margin: EdgeInsets.only(right: 10, bottom: 10),
+                          child: Card(
+                            elevation: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Dados do serviço
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          servico.descricao,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Preço por Hora: R\$ ${servico.precohora.toStringAsFixed(2)}',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Botão para Excluir
+                                  Column(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () async {
+                                          final confirm = await showDialog<
+                                            bool
+                                          >(
+                                            context: context,
+                                            builder:
+                                                (ctx) => AlertDialog(
+                                                  title: Text(
+                                                    'Excluir Serviço',
+                                                  ),
+                                                  content: Text(
+                                                    'Deseja realmente excluir este serviço?',
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed:
+                                                          () => Navigator.of(
+                                                            ctx,
+                                                          ).pop(false),
+                                                      child: Text('Cancelar'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed:
+                                                          () => Navigator.of(
+                                                            ctx,
+                                                          ).pop(true),
+                                                      child: Text('Excluir'),
+                                                    ),
+                                                  ],
+                                                ),
+                                          );
 
-                        // Exibindo a lista de serviços
-                        ...snapshot.data!.map((servico) {
-                          return Container(
-                            width: 400,
-                            margin: EdgeInsets.only(right: 10, bottom: 10),
-                            child: Card(
-                              elevation: 5,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      servico.descricao,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
+                                          if (confirm == true) {
+                                            await bdm1().deletarServico(
+                                              servico.id!,
+                                            );
+                                            _carregarServicos();
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Serviço excluído com sucesso!',
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
                                       ),
-                                    ),
-                                    Text(
-                                      'Preço por Hora: R\$ ${servico.precohora.toStringAsFixed(2)}',
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ],
-                    ),
-                  ),
+                          ),
+                        );
+                      }).toList(),
                 ),
-
-                // O botão fixo na parte inferior
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('Cadastrar/servicos');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(), // Botão com borda circular
-                      padding: EdgeInsets.all(
-                        20,
-                      ), // Espaçamento interno para aumentar o botão
-                    ),
-                    child: Icon(
-                      Icons.add, // Ícone de adição
-                      size: 30, // Ajuste o tamanho do ícone conforme necessário
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
+              ),
+      // Botão flutuante
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(
+            context,
+          ).pushNamed('Cadastrar/servicos').then((_) => _carregarServicos());
         },
+        child: Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
     );
   }

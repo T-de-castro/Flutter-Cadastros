@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       title: 'My App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 255, 0, 0),
+          seedColor: const Color.fromARGB(255, 106, 127, 245),
         ),
         useMaterial3: true,
       ),
@@ -43,7 +43,27 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  String nomeUsuario = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarNomeSalvo();
+  }
+
+  Future<void> _carregarNomeSalvo() async {
+    final nome = await bdm1().buscarUsuario();
+    setState(() {
+      nomeUsuario = nome ?? '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,19 +76,32 @@ class MyHomePage extends StatelessWidget {
         children: <Widget>[
           Container(
             padding: EdgeInsets.all(30),
-            child: Text('Bem Vindo a tela Inicial!'),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Bem-Vindo', style: TextStyle(fontSize: 25)),
+                TextField(
+                  decoration: InputDecoration(labelText: 'Digite seu nome'),
+                  controller: TextEditingController(text: nomeUsuario),
+                  onChanged: (valor) {
+                    nomeUsuario = valor;
+                  },
+                ),
+              ],
+            ),
           ),
           ElevatedButton.icon(
-            icon: Icon(Icons.delete_forever, color: Colors.white),
-            label: Text('Apagar Banco de Dados (Dev)'),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            icon: Icon(Icons.save, color: Colors.white),
+            label: Text('Salvar'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            ),
             onPressed: () async {
-              await bdm1().deletarBanco();
+              await bdm1().inserirUsuario(nomeUsuario);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Banco de dados apagado! Reinicie o app.'),
-                ),
+                SnackBar(content: Text('Nome salvo com sucesso!')),
               );
+              setState(() {}); // Atualiza se necessário
             },
           ),
         ],

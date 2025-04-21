@@ -28,82 +28,110 @@ class _CadastroClientePage extends State<CadastroClientePage> {
       drawer: Menu(),
       body: Column(
         children: <Widget>[
+          // Linha com o botão de voltar e título
           Container(
             padding: EdgeInsets.all(30), //Padding para todas as direções
-            child: Column(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Novo Cliente', style: TextStyle(fontSize: 25)),
-                TextFormField(
-                  controller: nomeController,
-                  decoration: const InputDecoration(hintText: 'Nome'),
-                  textCapitalization: TextCapitalization.words,
-                ),
-                SizedBox(height: 10),
-
-                TextFormField(
-                  controller: enderecoController,
-                  decoration: const InputDecoration(hintText: 'Endereco'),
-                  textCapitalization: TextCapitalization.words,
-                ),
-                SizedBox(height: 10),
-
-                TextFormField(
-                  controller: telefoneController,
-                  decoration: const InputDecoration(hintText: 'Telefone'),
-                  keyboardType: TextInputType.number,
-                ),
-                SizedBox(height: 10),
-
-                ElevatedButton(
-                  child: Text('Incluir'),
-                  onPressed: () async {
-                    //Validar os campos vazios
-                    if (nomeController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Preencha o nome!')),
-                      );
-                      return;
-                    }
-                    if (enderecoController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Preencha o Endereço!')),
-                      );
-                      return;
-                    }
-
-                    if (telefoneController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Preencha o Telefone!')),
-                      );
-                      return;
-                    }
-
-                    //Criar a variável que manda os dados para a função
-                    final cliente = {
-                      'nome': nomeController.text,
-                      'endereco': enderecoController.text,
-                      'telefone': telefoneController.text,
-                    };
-
-                    //Chama a função para cadastrar no Banco
-                    await bdm1().inserirCliente(cliente);
-
-                    //Mensagem de sucesso
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Cliente salvo com sucesso!')),
-                    );
-
-                    //Limpar os campos do cadastro
-                    nomeController.clear();
-                    enderecoController.clear();
-                    telefoneController.clear();
-
-                    //Voltar para a tela de lista de clientes
-                    Navigator.of(context).pushNamed('Listar/clientes');
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
                 ),
+                Text('Novo Cliente', style: TextStyle(fontSize: 25)),
+                SizedBox(width: 48), // Espaço vazio para alinhar à direita
               ],
             ),
+          ),
+          // Campo Nome com borda lateral
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextFormField(
+              controller: nomeController,
+              decoration: const InputDecoration(
+                hintText: 'Nome',
+                border: OutlineInputBorder(),
+              ),
+              textCapitalization: TextCapitalization.words,
+            ),
+          ),
+          SizedBox(height: 10),
+          // Campo Endereço com borda lateral
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextFormField(
+              controller: enderecoController,
+              decoration: const InputDecoration(
+                hintText: 'Endereço',
+                border: OutlineInputBorder(),
+              ),
+              textCapitalization: TextCapitalization.words,
+            ),
+          ),
+          SizedBox(height: 10),
+          // Campo Telefone com borda lateral
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextFormField(
+              controller: telefoneController,
+              decoration: const InputDecoration(
+                hintText: 'Telefone',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          SizedBox(height: 10),
+          // Botão Incluir
+          ElevatedButton(
+            child: Text('Incluir'),
+            onPressed: () async {
+              // Validar os campos vazios
+              if (nomeController.text.isEmpty) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Preencha o nome!')));
+                return;
+              }
+              if (enderecoController.text.isEmpty) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Preencha o Endereço!')));
+                return;
+              }
+
+              if (telefoneController.text.isEmpty) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Preencha o Telefone!')));
+                return;
+              }
+
+              // Criar a variável que manda os dados para a função
+              final cliente = {
+                'nome': nomeController.text,
+                'endereco': enderecoController.text,
+                'telefone': telefoneController.text,
+              };
+
+              // Chama a função para cadastrar no Banco
+              await bdm1().inserirCliente(cliente);
+
+              // Mensagem de sucesso
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Cliente salvo com sucesso!')),
+              );
+
+              // Limpar os campos do cadastro
+              nomeController.clear();
+              enderecoController.clear();
+              telefoneController.clear();
+
+              // Voltar para a tela de lista de clientes
+              Navigator.of(context).pushNamed('Listar/clientes');
+            },
           ),
         ],
       ),

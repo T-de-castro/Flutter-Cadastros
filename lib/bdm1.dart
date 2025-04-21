@@ -52,6 +52,45 @@ class bdm1 {
         idServico int NOT NULL
       )
     ''');
+
+    await bd.execute('''
+      CREATE TABLE usuario (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+          nome TEXT
+      )
+    ''');
+  }
+
+  //USUÁRIO
+  Future<void> inserirUsuario(String nome) async {
+    final db = await database;
+
+    // Verifica se já existe algum usuário salvo
+    final resultado = await db.query('usuario');
+
+    if (resultado.isEmpty) {
+      // Se não existe, insere
+      await db.insert('usuario', {'nome': nome});
+    } else {
+      // Se já existe, atualiza o primeiro registro
+      await db.update(
+        'usuario',
+        {'nome': nome},
+        where: 'id = ?',
+        whereArgs: [resultado.first['id']],
+      );
+    }
+  }
+
+  Future<String?> buscarUsuario() async {
+    final db = await database;
+
+    final resultado = await db.query('usuario', limit: 1);
+    if (resultado.isNotEmpty) {
+      return resultado.first['nome'] as String?;
+    } else {
+      return null;
+    }
   }
 
   //CLIENTES
@@ -133,6 +172,8 @@ class bdm1 {
     await bd.delete('servico', where: 'id = ?', whereArgs: [id]);
   }
 
+  //ORDEM DE SERVIÇO
+
   // 12. Inserir um dado na tabela
   Future<void> inserirOS(Map<String, dynamic> dados) async {
     final bd = await database;
@@ -145,17 +186,17 @@ class bdm1 {
 
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
     SELECT 
-      os.id, 
-      os.idCliente, 
-      os.idServico, 
-      os.quantidade, 
-      os.precoservico, 
-      os.data,
+      OS.id, 
+      OS.idCliente, 
+      OS.idServico, 
+      OS.quantidade, 
+      OS.precoservico, 
+      OS.data,
       c.nome AS nomeCliente,
       s.descricao AS nomeServico
-    FROM os
-    JOIN cliente c ON os.idCliente = c.id
-    JOIN servico s ON os.idServico = s.id
+    FROM OS
+    JOIN cliente c ON OS.idCliente = c.id
+    JOIN servico s ON OS.idServico = s.id
   ''');
 
     return List.generate(maps.length, (i) {

@@ -9,6 +9,45 @@ class ListarClientesPage extends StatelessWidget {
     return await bdm1().listarClientes();
   }
 
+  // Função para excluir um cliente
+  void _excluirCliente(BuildContext context, int clienteId) async {
+    // Exibe um dialog de confirmação antes de excluir
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Confirmar exclusão'),
+          content: Text('Tem certeza de que deseja excluir este cliente?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo
+              },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Deletar o cliente
+                await bdm1().deletarCliente(clienteId);
+
+                // Fechar o diálogo
+                Navigator.of(context).pop();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Cliente excluído com sucesso!')),
+                );
+
+                // Recarregar a lista de clientes
+                (context as Element).markNeedsBuild();
+              },
+              child: Text('Excluir'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,71 +64,65 @@ class ListarClientesPage extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Erro: ${snapshot.error}'));
           } else {
-            return Column(
-              children: [
-                // O conteúdo da lista de clientes
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // Se não houver dados, exibe a mensagem de "Nenhum cliente encontrado!"
-                        if (snapshot.data!.isEmpty)
-                          Center(child: Text('Nenhum cliente encontrado!')),
-
-                        // Exibindo a lista de clientes
-                        ...snapshot.data!.map((cliente) {
-                          return Container(
-                            width: 400,
-                            margin: EdgeInsets.only(right: 10, bottom: 10),
-                            child: Card(
-                              elevation: 5,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      cliente.nome,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+            // Usar ListView para garantir rolagem e melhor controle de layout
+            return snapshot.data!.isEmpty
+                ? Center(child: Text('Nenhum cliente encontrado!'))
+                : ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    var cliente = snapshot.data![index];
+                    return Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(right: 10, bottom: 10),
+                      child: Card(
+                        elevation: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Este Row coloca o texto à esquerda e o IconButton à direita
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween, // Espaça entre os itens
+                                children: [
+                                  // Nome do cliente
+                                  Text(
+                                    cliente.nome,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    Text('Endereço: ${cliente.endereco}'),
-                                    Text('Telefone: ${cliente.telefone}'),
-                                  ],
-                                ),
+                                  ),
+                                  // Botão de excluir à direita
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      _excluirCliente(context, cliente.id);
+                                    },
+                                  ),
+                                ],
                               ),
-                            ),
-                          );
-                        }).toList(),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // O botão fixo na parte inferior
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('Cadastrar/clientes');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(), // Botão com borda circular
-                      padding: EdgeInsets.all(
-                        20,
-                      ), // Espaçamento interno para aumentar o botão
-                    ),
-                    child: Icon(
-                      Icons.add, // Ícone de adição
-                      size: 30, // Ajuste o tamanho do ícone conforme necessário
-                    ),
-                  ),
-                ),
-              ],
-            );
+                              // Restante dos detalhes do cliente
+                              Text('Endereço: ${cliente.endereco}'),
+                              Text('Telefone: ${cliente.telefone}'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
           }
         },
+      ),
+      // Botão flutuante
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed('Cadastrar/clientes');
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
     );
   }
